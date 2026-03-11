@@ -1,0 +1,70 @@
+#include <stdint.h>
+#include <stddef.h>
+#include <string.h>
+
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h>
+
+#define MAX_PATTERN_SIZE 1024
+#define MAX_SUBJECT_SIZE 1024
+
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+    if (size < 2) {
+        return 0;
+    }
+
+    // Split input into pattern and subject
+    size_t pattern_len = data[0] % MAX_PATTERN_SIZE;
+    if (pattern_len + 1 >= size) {
+        return 0;
+    }
+
+    size_t subject_len = size - pattern_len - 1;
+    if (subject_len > MAX_SUBJECT_SIZE) {
+        subject_len = MAX_SUBJECT_SIZE;
+    }
+
+    const uint8_t *pattern = data + 1;
+    const uint8_t *subject = data + 1 + pattern_len;
+
+    int errorcode;
+    PCRE2_SIZE erroroffset;
+
+    pcre2_code *re = pcre2_compile(
+        pattern,
+        pattern_len,
+        PCRE2_UTF | PCRE2_NO_UTF_CHECK,
+        &errorcode,
+        &erroroffset,
+        NULL
+    );
+
+    if (re == NULL) {
+        // Invalid regex is normal during fuzzing
+        return 0;
+    }
+
+    pcre2_match_data *match_data =
+        pcre2_match_data_create_from_pattern(re, NULL);
+
+    if (match_data == NULL) {
+        pcre2_code_free(re);
+        return 0;
+    }
+
+    // Execute the match
+    pcre2_match(
+        re,
+        subject,
+        subject_len,
+        0,
+        0,
+        match_data,
+        NULL
+    );
+
+    pcre2_match_data_free(match_data);
+    pcre2_code_free(re);
+
+    return 0;
+}
