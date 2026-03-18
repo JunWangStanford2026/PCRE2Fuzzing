@@ -1,31 +1,33 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <vector>
+#include <algorithm>
 
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
 
-#define MAX_PATTERN_SIZE 1024
+#define MAX_PATTERN_SIZE 8192
 #define MAX_SUBJECT_SIZE 1024
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-    if (size < 2) {
+    if (size < 3) {
         return 0;
     }
 
     // Split input into pattern and subject
-    size_t pattern_len = data[0] % MAX_PATTERN_SIZE;
-    if (pattern_len + 1 >= size) {
+    size_t pattern_len = *(uint16_t*)data % MAX_PATTERN_SIZE;
+    if (pattern_len + 2 >= size) {
         return 0;
     }
 
-    size_t subject_len = size - pattern_len - 1;
+    size_t subject_len = size - pattern_len - 2;
     if (subject_len > MAX_SUBJECT_SIZE) {
         subject_len = MAX_SUBJECT_SIZE;
     }
 
-    const uint8_t *pattern = data + 1;
-    const uint8_t *subject = data + 1 + pattern_len;
+    const uint8_t *pattern = data + 2;
+    const uint8_t *subject = data + 2 + pattern_len;
 
     int errorcode;
     PCRE2_SIZE erroroffset;
