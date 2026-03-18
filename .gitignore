@@ -1,0 +1,47 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+pcre2/build/pcre2_fuzzer
+pcre2/build/test_crash*
+pcre2/build/minimal_crash
+pcre2/build/minimal_crash_bug2*
+pcre2/build/CMakeFiles/
+pcre2/build/cmake_install.cmake
+pcre2/build/CMakeCache.txt
+pcre2/build/Makefile
+pcre2/build/interface/
+pcre2/build/src/
+pcre2/build/cmake/
+pcre2/build/*.pc
+pcre2/build/*.pc.generator
+pcre2/build/pcre2-config
+pcre2/build/lib*.a
+
+# Fuzzing artifacts
+pcre2/build/corpus/
+pcre2/build/seeds/
+pcre2/build/crash-*
+pcre2/build/leak-*
+pcre2/build/timeout-*
+pcre2/build/slow-unit-*
+pcre2/build/*.bin
+pcre2/build/crashes_found/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
