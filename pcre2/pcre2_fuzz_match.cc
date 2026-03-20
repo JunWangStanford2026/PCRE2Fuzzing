@@ -34,7 +34,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     pcre2_code *re = pcre2_compile(
         pattern,
         pattern_len,
-        PCRE2_UTF | PCRE2_NO_UTF_CHECK,
+        0,  // removed UTF flag
         &errorcode,
         &erroroffset,
         NULL
