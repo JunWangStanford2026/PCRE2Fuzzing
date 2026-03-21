@@ -31,10 +31,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     int errorcode;
     PCRE2_SIZE erroroffset;
 
+    // build regex
     pcre2_code *re = pcre2_compile(
         pattern,
         pattern_len,
-        PCRE2_UTF | PCRE2_NO_UTF_CHECK,
+        PCRE2_UTF | PCRE2_NO_UTF_CHECK, // utf flags
         &errorcode,
         &erroroffset,
         NULL
@@ -52,11 +53,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         return 0;
     }
 
+    // run regex pattern against subjet string
     pcre2_match(
-        re,
-        subject,
-        subject_len,
-        0,
+        re, // pattern to be matched
+        subject, // string to be tested
+        subject_len, // length of subject
+        0, // match start index
         0,
         match_data,
         NULL
